@@ -1,140 +1,418 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Little Green Mushroom</title>
-  <style>
-    :root {
-      --leaf-1: #9bd0a6;
-      --leaf-2: #2d8c59;
-      --mint:   #e9f4ec;
-      --ink:    #333;
-    }
-    body {
-      margin: 0;
-      font-family: system-ui, sans-serif;
-      color: var(--ink);
-      background: radial-gradient(60rem 60rem at 50% -10rem, var(--mint), #fff 70%);
-    }
-    header {
-      background: rgba(255,255,255,.8);
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-    }
-    header img { height: 48px; border-radius: 50%; }
-    nav a {
-      margin-left: 1rem;
-      text-decoration: none;
-      color: var(--leaf-2);
-      font-weight: 600;
-    }
-    .hero {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-      align-items: center;
-      padding: 4rem 2rem;
-    }
-    .hero h1 { font-size: 2.5rem; margin: .5rem 0; }
-    .btn {
-      display: inline-block;
-      padding: .8rem 1.2rem;
-      border-radius: .75rem;
-      font-weight: bold;
-      text-decoration: none;
-      margin-top: 1rem;
-    }
-    .btn-primary { background: var(--leaf-2); color: #fff; }
-    .btn-ghost { border: 2px solid var(--leaf-2); color: var(--leaf-2); margin-left: .5rem; }
-    section {
-      padding: 3rem 2rem;
-      max-width: 1000px;
-      margin: auto;
-    }
-    h2 { margin-bottom: .5rem; }
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1rem;
-    }
-    .card {
-      background: #fff;
-      border-radius: 1rem;
-      padding: 1.5rem;
-      box-shadow: 0 4px 16px rgba(0,0,0,.08);
-    }
-    footer {
-      background: #fff;
-      padding: 1rem 2rem;
-      text-align: center;
-      border-top: 1px solid rgba(0,0,0,.1);
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Little Green Mushroom</title>
+<style>
+  /* ====== Palette & base ====== */
+  :root{
+    --leaf-1:#9bd0a6; --leaf-2:#2d8c59; --mint:#e9f4ec; --ink:#344; --ink-2:#566;
+    --shadow:0 10px 30px rgba(45,140,89,.10); --r:1rem;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--ink);
+       background:radial-gradient(60rem 60rem at 50% -10rem,var(--mint),#fff 70%)}
+  img{max-width:100%;display:block}
+  a{color:var(--leaf-2);text-decoration:none}
+  .container{width:min(1100px,92vw);margin-inline:auto}
+
+  /* ====== Header / Nav (with dropdowns) ====== */
+  header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.8);backdrop-filter:blur(6px);
+         border-bottom:1px solid rgba(47,143,78,.15)}
+  .head{display:flex;align-items:center;justify-content:space-between;padding:.75rem 0}
+  .brand{display:flex;gap:.75rem;align-items:center}
+  .brand img{width:44px;height:44px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+  .brand span{font-weight:700;letter-spacing:.4px;color:var(--ink)}
+  .nav{display:flex;gap:1rem;align-items:center}
+  .nav > ul{list-style:none;display:flex;gap:.5rem;margin:0;padding:0}
+  .nav > ul > li{position:relative}
+  .nav > ul > li > a,
+  .nav > ul > li > button{padding:.55rem .75rem;border-radius:.6rem;color:var(--ink)}
+  .nav > ul > li > a:hover{background:var(--mint)}
+  .nav > ul > li > button{border:0;background:transparent;font:inherit;cursor:pointer}
+  /* dropdown */
+  .menu{position:absolute;left:0;top:100%;min-width:220px;background:#fff;border:1px solid rgba(47,143,78,.15);
+        border-radius:.7rem;box-shadow:var(--shadow);padding:.4rem;display:none}
+  .menu a{display:block;padding:.5rem .6rem;border-radius:.5rem;color:var(--ink-2)}
+  .menu a:hover{background:var(--mint);color:var(--leaf-2)}
+  .open>.menu{display:block}
+  /* mobile toggle */
+  .toggle{display:none;border:0;background:transparent;padding:.5rem;border-radius:.6rem}
+  .toggle .bar{display:block;width:26px;height:3px;margin:4px 0;background:var(--leaf-2);border-radius:2px}
+  @media (max-width:880px){
+    .toggle{display:block}
+    .nav{display:none;position:absolute;right:1rem;top:64px;background:#fff;border:1px solid rgba(47,143,78,.15);
+         border-radius:.8rem;box-shadow:var(--shadow);padding:.5rem}
+    .nav.open{display:block}
+    .nav > ul{flex-direction:column;min-width:220px}
+    .menu{position:static;box-shadow:none;border:0;padding:0;display:block}
+  }
+
+  /* ====== Hero with simple carousel ====== */
+  .hero{padding:clamp(2.5rem,5vw+1.5rem,5rem) 0}
+  .hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:2rem;align-items:center}
+  .cta a{display:inline-block;margin:.5rem .5rem 0 0;padding:.75rem 1rem;border-radius:.8rem;font-weight:600;border:1px solid transparent}
+  .btn-primary{background:var(--leaf-2);color:#fff}
+  .btn-ghost{border-color:var(--leaf-2);color:var(--leaf-2)}
+  @media (max-width:880px){.hero .wrap{grid-template-columns:1fr;text-align:center}.cta{display:flex;justify-content:center;gap:.5rem}}
+
+  .carousel{position:relative;border-radius:1.25rem;overflow:hidden;box-shadow:var(--shadow);background:var(--mint)}
+  .slides{display:flex;transition:transform .5s ease}
+  .slide{min-width:100%;aspect-ratio:16/9;display:grid;place-items:center;font-weight:700;color:#2d8c59}
+  .dots{position:absolute;inset:auto 0 8px 0;display:flex;justify-content:center;gap:.4rem}
+  .dot{width:10px;height:10px;border-radius:50%;background:rgba(45,140,89,.35);cursor:pointer;border:0}
+  .dot.active{background:var(--leaf-2)}
+  .carousel .prev,.carousel .next{
+    position:absolute;top:50%;transform:translateY(-50%);background:#fff;border:0;border-radius:.6rem;padding:.4rem .6rem;cursor:pointer;
+    box-shadow:var(--shadow)
+  }
+  .carousel .prev{left:8px}.carousel .next{right:8px}
+
+  /* ====== Sections / Cards / Tiles ====== */
+  section{padding:clamp(2rem,4vw+1rem,3.5rem) 0}
+  .section-head{margin-bottom:1rem}
+  .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+  .grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+  @media (max-width:900px){.grid-3{grid-template-columns:1fr}.grid-2{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid rgba(47,143,78,.12);border-radius:1rem;box-shadow:var(--shadow);padding:1.25rem}
+
+  /* ====== Explore tiles ====== */
+  .tile{border-radius:1rem;overflow:hidden;box-shadow:var(--shadow);display:grid}
+  .tile .img{aspect-ratio:16/9;background:var(--mint)}
+  .tile .body{padding:1rem;background:#fff;border:1px solid rgba(47,143,78,.12);border-top:0}
+  .tile .actions{margin-top:.25rem}
+
+  /* ====== Shop grid ====== */
+  .product{display:flex;flex-direction:column;border:1px solid rgba(47,143,78,.12);border-radius:1rem;overflow:hidden;background:#fff;box-shadow:var(--shadow)}
+  .product .media{aspect-ratio:16/10;background:var(--mint)}
+  .product .body{padding:1rem}
+  .price-row{display:flex;justify-content:space-between;align-items:center}
+  .price{font-weight:700}
+
+  /* ====== Contact ====== */
+  form{display:grid;gap:1rem;max-width:640px}
+  input,textarea{font:inherit;padding:.65rem .75rem;border-radius:.7rem;border:1px solid rgba(47,143,78,.25);background:#fff}
+  input:focus,textarea:focus{outline:2px solid var(--leaf-1);outline-offset:2px}
+
+  /* ====== Footer ====== */
+  footer{border-top:1px solid rgba(47,143,78,.15);background:#fff}
+  .foot{display:flex;justify-content:space-between;align-items:center;padding:1rem 0}
+  .social a{margin-left:.75rem;color:var(--ink-2)}
+</style>
 </head>
 <body>
-  <header>
-    <div class="brand">
-      <img src="logo.png" alt="Logo">
-    </div>
-    <nav>
-      <a href="#about">About</a>
-      <a href="#products">Products</a>
-      <a href="#contact">Contact</a>
+
+<!-- ===== HEADER / NAV ===== -->
+<header>
+  <div class="container head">
+    <a class="brand" href="#home">
+      <img src="logo.png" alt="The Little Green Mushroom logo">
+      <span>The Little Green Mushroom</span>
+    </a>
+
+    <button class="toggle" aria-expanded="false" aria-controls="nav" aria-label="Toggle navigation">
+      <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+    </button>
+
+    <nav id="nav" class="nav" aria-label="Primary">
+      <ul>
+        <li><a href="#home">Home</a></li>
+
+        <li class="has-dd">
+          <button type="button" aria-haspopup="true" aria-expanded="false">About ▾</button>
+          <div class="menu" role="menu">
+            <a href="#about-who">Who We Are</a>
+            <a href="#about-mission">Our Mission</a>
+            <a href="#about-greens">Our Greens</a>
+            <a href="#about-mushrooms">Our Mushrooms</a>
+          </div>
+        </li>
+
+        <li class="has-dd">
+          <button type="button" aria-haspopup="true" aria-expanded="false">Explore ▾</button>
+          <div class="menu" role="menu">
+            <a href="#explore-microgreens">Explore Microgreens</a>
+            <a href="#explore-mushrooms">Explore Mushrooms</a>
+          </div>
+        </li>
+
+        <li><a href="#shop">Shop</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
     </nav>
-  </header>
+  </div>
+</header>
 
-  <section class="hero">
-    <div>
-      <h1>Main Headline</h1>
-      <p>Short subheading goes here.</p>
-      <a href="#contact" class="btn btn-primary">Primary CTA</a>
-      <a href="#products" class="btn btn-ghost">Secondary CTA</a>
-    </div>
-    <div>
-      <!-- Decorative circle -->
-      <div style="width:280px;aspect-ratio:1/1;border-radius:50%;background:conic-gradient(var(--mint),#fff);outline:8px solid var(--leaf-1);margin:auto;"></div>
+<main id="home">
+
+  <!-- ===== HOME: HERO with CAROUSEL ===== -->
+  <section class="hero" aria-label="Hero">
+    <div class="container wrap">
+      <div>
+        <h1>Hero headline</h1>
+        <p class="lede">Short value proposition or tagline.</p>
+        <div class="cta">
+          <a href="#shop" class="btn-primary">Shop Now</a>
+          <a href="#explore-microgreens" class="btn-ghost">Learn More</a>
+        </div>
+      </div>
+
+      <div>
+        <div class="carousel" data-carousel>
+          <div class="slides">
+            <div class="slide" style="background:#eaf6ef">Slide 1 (add photo)</div>
+            <div class="slide" style="background:#e4f2e9">Slide 2 (add photo)</div>
+            <div class="slide" style="background:#def0e4">Slide 3 (add photo)</div>
+          </div>
+          <button class="prev" aria-label="Previous slide">‹</button>
+          <button class="next" aria-label="Next slide">›</button>
+          <div class="dots"></div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section id="about">
-    <h2>About</h2>
+  <!-- About Preview -->
+  <section class="container">
+    <div class="section-head">
+      <h2>About Preview</h2>
+      <p>Short blurb + button to full About section.</p>
+    </div>
+    <a class="btn-ghost" href="#about-who">About → Who We Are</a>
+  </section>
+
+  <!-- Explore Preview -->
+  <section class="container">
+    <div class="section-head">
+      <h2>Explore Preview</h2>
+      <p>Two tiles linking to Microgreens & Mushrooms.</p>
+    </div>
+    <div class="grid-2">
+      <article class="tile">
+        <div class="img" aria-hidden="true"></div>
+        <div class="body">
+          <h3>Microgreens</h3>
+          <p>Benefits highlight.</p>
+          <div class="actions"><a class="btn-ghost" href="#explore-microgreens">Explore Microgreens</a></div>
+        </div>
+      </article>
+      <article class="tile">
+        <div class="img" aria-hidden="true"></div>
+        <div class="body">
+          <h3>Mushrooms</h3>
+          <p>Benefits highlight.</p>
+          <div class="actions"><a class="btn-ghost" href="#explore-mushrooms">Explore Mushrooms</a></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Shop Preview -->
+  <section class="container">
+    <div class="section-head">
+      <h2>Shop Preview</h2>
+      <p>Feature a few items or a “Coming Soon”.</p>
+    </div>
+    <a class="btn-ghost" href="#shop">Go to Shop</a>
+  </section>
+
+  <!-- Contact Preview -->
+  <section class="container">
+    <div class="section-head">
+      <h2>Contact Preview</h2>
+      <p>Email + phone + “See more”.</p>
+    </div>
+    <a class="btn-ghost" href="#contact">See Contact Details</a>
+  </section>
+
+  <!-- ===== ABOUT (dropdown sections) ===== -->
+  <section id="about-who" class="container">
+    <div class="section-head"><h2>Who We Are</h2></div>
     <div class="grid-3">
-      <div class="card"><h3>Card 1</h3><p>Your text.</p></div>
-      <div class="card"><h3>Card 2</h3><p>Your text.</p></div>
-      <div class="card"><h3>Card 3</h3><p>Your text.</p></div>
+      <article class="card"><h3>Story</h3><p>…</p></article>
+      <article class="card"><h3>Founders</h3><p>…</p></article>
+      <article class="card"><h3>Gallery</h3><p>…</p></article>
     </div>
   </section>
 
-  <section id="products">
-    <h2>Products</h2>
+  <section id="about-mission" class="container">
+    <div class="section-head"><h2>Our Mission</h2></div>
+    <div class="card"><p>… sustainability, community, healthy living, goals …</p></div>
+  </section>
+
+  <section id="about-greens" class="container">
+    <div class="section-head"><h2>Our Greens</h2></div>
     <div class="grid-3">
-      <div class="card"><h3>Item A</h3><p>Details.</p></div>
-      <div class="card"><h3>Item B</h3><p>Details.</p></div>
-      <div class="card"><h3>Item C</h3><p>Details.</p></div>
+      <div class="card"><h3>Types</h3><p>…</p></div>
+      <div class="card"><h3>Nutrition</h3><p>…</p></div>
+      <div class="card"><h3>Practices</h3><p>…</p></div>
     </div>
   </section>
 
-  <section id="contact">
-    <h2>Contact</h2>
-    <form>
-      <p><input type="text" placeholder="Name" style="width:100%;padding:.6rem;border-radius:.5rem;border:1px solid #ccc;"></p>
-      <p><input type="email" placeholder="Email" style="width:100%;padding:.6rem;border-radius:.5rem;border:1px solid #ccc;"></p>
-      <p><textarea placeholder="Message" rows="4" style="width:100%;padding:.6rem;border-radius:.5rem;border:1px solid #ccc;"></textarea></p>
-      <p><button class="btn btn-primary">Send</button></p>
-    </form>
+  <section id="about-mushrooms" class="container">
+    <div class="section-head"><h2>Our Mushrooms</h2></div>
+    <div class="grid-3">
+      <div class="card"><h3>Varieties</h3><p>…</p></div>
+      <div class="card"><h3>Benefits</h3><p>…</p></div>
+      <div class="card"><h3>Philosophy</h3><p>…</p></div>
+    </div>
   </section>
 
-  <footer>
-    © <span id="y"></span> The Little Green Mushroom
-  </footer>
+  <!-- ===== EXPLORE (education + inspiration) ===== -->
+  <section id="explore-microgreens" class="container">
+    <div class="section-head"><h2>Explore Microgreens</h2></div>
+    <div class="grid-3">
+      <div class="card"><h3>Benefits</h3><p>…</p></div>
+      <div class="card"><h3>Why People Love Them</h3><p>…</p></div>
+      <div class="card"><h3>Recipes</h3><p>…</p></div>
+    </div>
+  </section>
 
-  <script>
-    document.getElementById('y').textContent = new Date().getFullYear();
-  </script>
+  <section id="explore-mushrooms" class="container">
+    <div class="section-head"><h2>Explore Mushrooms</h2></div>
+    <div class="grid-3">
+      <div class="card"><h3>Health & Cooking</h3><p>…</p></div>
+      <div class="card"><h3>Textures & Flavors</h3><p>…</p></div>
+      <div class="card"><h3>Recipes</h3><p>…</p></div>
+    </div>
+  </section>
+
+  <!-- ===== SHOP (optional e-commerce) ===== -->
+  <section id="shop" class="container">
+    <div class="section-head"><h2>Shop</h2></div>
+    <div class="grid-3">
+      <article class="product">
+        <div class="media" aria-hidden="true"></div>
+        <div class="body">
+          <h3>Product Name</h3>
+          <p>Short description.</p>
+          <div class="price-row">
+            <span class="price">$—</span>
+            <a class="btn-ghost" href="#">Add to cart</a>
+          </div>
+        </div>
+      </article>
+      <article class="product">
+        <div class="media"></div>
+        <div class="body">
+          <h3>Product Name</h3>
+          <p>Short description.</p>
+          <div class="price-row">
+            <span class="price">$—</span>
+            <a class="btn-ghost" href="#">Add to cart</a>
+          </div>
+        </div>
+      </article>
+      <article class="product">
+        <div class="media"></div>
+        <div class="body">
+          <h3>Product Name</h3>
+          <p>Short description.</p>
+          <div class="price-row">
+            <span class="price">$—</span>
+            <a class="btn-ghost" href="#">Add to cart</a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section id="contact" class="container">
+    <div class="section-head"><h2>Contact</h2></div>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Contact Info</h3>
+        <p>Email: <a href="mailto:hello@thelittlegreenmushroom.com">hello@thelittlegreenmushroom.com</a></p>
+        <p>Phone: <a href="tel:+10000000000">+1 (000) 000-0000</a></p>
+        <p>Hours: M–F, 9–5</p>
+        <div class="social">
+          <a href="#">IG</a> · <a href="#">FB</a> · <a href="#">TikTok</a>
+        </div>
+      </div>
+      <form class="card" onsubmit="return false">
+        <label>Name<input type="text" placeholder="Your name" required></label>
+        <label>Email<input type="email" placeholder="you@example.com" required></label>
+        <label>Message<textarea rows="4" placeholder="Say hello"></textarea></label>
+        <button class="btn-primary" type="submit">Send</button>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="container foot">
+    <p>© <span id="y"></span> The Little Green Mushroom</p>
+    <div class="social">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Current year
+  document.getElementById('y').textContent = new Date().getFullYear();
+
+  // Mobile nav toggle
+  const toggle = document.querySelector('.toggle');
+  const nav = document.getElementById('nav');
+  toggle.addEventListener('click', () => {
+    const open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', String(open));
+  });
+
+  // Dropdowns (click for mobile / focus for desktop)
+  const ddParents = document.querySelectorAll('.has-dd');
+  ddParents.forEach(p => {
+    const btn = p.querySelector('button');
+    btn.addEventListener('click', () => {
+      const open = p.classList.toggle('open');
+      btn.setAttribute('aria-expanded', String(open));
+    });
+    p.addEventListener('mouseenter', () => p.classList.add('open'));
+    p.addEventListener('mouseleave', () => p.classList.remove('open'));
+  });
+
+  // Simple carousel (click + swipe)
+  const carousels = document.querySelectorAll('[data-carousel]');
+  carousels.forEach(c => {
+    const track = c.querySelector('.slides');
+    const slides = Array.from(c.querySelectorAll('.slide'));
+    const prev = c.querySelector('.prev');
+    const next = c.querySelector('.next');
+    const dotsBox = c.querySelector('.dots');
+    let i = 0, startX = null;
+
+    function go(n){
+      i = (n + slides.length) % slides.length;
+      track.style.transform = `translateX(-${i*100}%)`;
+      dotsBox.querySelectorAll('.dot').forEach((d,idx)=>d.classList.toggle('active', idx===i));
+    }
+    slides.forEach((_,idx)=>{
+      const b = document.createElement('button');
+      b.className = 'dot' + (idx===0?' active':'');
+      b.addEventListener('click', ()=>go(idx));
+      dotsBox.appendChild(b);
+    });
+    prev.addEventListener('click', ()=>go(i-1));
+    next.addEventListener('click', ()=>go(i+1));
+
+    // swipe
+    track.addEventListener('touchstart', e=> startX = e.touches[0].clientX, {passive:true});
+    track.addEventListener('touchend', e=>{
+      if(startX===null) return;
+      const dx = e.changedTouches[0].clientX - startX;
+      if(Math.abs(dx) > 40) go(i + (dx<0?1:-1));
+      startX = null;
+    });
+
+    // auto-play (optional; comment out if not wanted)
+    setInterval(()=>go(i+1), 5000);
+  });
+</script>
 </body>
 </html>
